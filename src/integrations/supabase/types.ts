@@ -280,7 +280,51 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profile: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          career_goal: string | null
+          full_name: string | null
+          github_url: string | null
+          headline: string | null
+          id: string | null
+          linkedin_url: string | null
+          location: string | null
+          resume_url: string | null
+          tagline: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          career_goal?: string | null
+          full_name?: string | null
+          github_url?: string | null
+          headline?: string | null
+          id?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          resume_url?: string | null
+          tagline?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          career_goal?: string | null
+          full_name?: string | null
+          github_url?: string | null
+          headline?: string | null
+          id?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          resume_url?: string | null
+          tagline?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       is_current_user_admin: { Args: never; Returns: boolean }
