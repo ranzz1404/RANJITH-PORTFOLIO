@@ -91,9 +91,10 @@ function PortfolioPage() {
 function Hero({ profile }: { profile: Profile | null | undefined }) {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      <div className="absolute inset-0 blueprint-grid opacity-60" />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
-      <svg className="absolute top-20 right-10 w-40 h-40 text-accent/10 hidden md:block" viewBox="0 0 100 100" fill="currentColor">
+      <div className="absolute inset-0 blueprint-grid opacity-60" style={{ zIndex: 0 }} />
+      <GearsBackground />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background pointer-events-none" style={{ zIndex: 1 }} />
+      <svg className="absolute top-20 right-10 w-40 h-40 text-accent/10 hidden md:block" style={{ zIndex: 1 }} viewBox="0 0 100 100" fill="currentColor">
         <path d="M50 15a35 35 0 100 70 35 35 0 000-70zm0 8l5 8h-10l5-8zm24.7 19.3l-8 5v-10l8 5zM77 50l-8 5v-10l8 5zm-2.3 14.7l-5-8h10l-5 8zM50 77l-5-8h10l-5 8zm-24.7-2.3l8-5v10l-8-5zM23 50l8-5v10l-8-5zm2.3-14.7l5 8h-10l5-8zM50 35a15 15 0 100 30 15 15 0 000-30z" />
       </svg>
       <motion.div
