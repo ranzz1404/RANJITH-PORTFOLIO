@@ -21,7 +21,7 @@ function usePortfolio() {
   const profile = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
-      const { data } = await sb.from("profile").select("*").limit(1).maybeSingle();
+      const { data } = await sb.from("public_profile").select("*").limit(1).maybeSingle();
       return data as Profile | null;
     },
   });
