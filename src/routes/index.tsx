@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Linkedin, Mail, MapPin, Download, ArrowRight, ExternalLink, FileText, Wrench, GraduationCap, Award, Image as ImageIcon, Send } from "lucide-react";
@@ -8,6 +8,9 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/portfolio/Navbar";
 import { Section } from "@/components/portfolio/Section";
+import { GearsBackground } from "@/components/portfolio/GearsBackground";
+import { Particles } from "@/components/portfolio/Particles";
+import { TiltCard } from "@/components/portfolio/TiltCard";
 import type { Profile, Project, Skill, Certificate, Internship, Drawing } from "@/lib/portfolio-types";
 
 export const Route = createFileRoute("/")({
