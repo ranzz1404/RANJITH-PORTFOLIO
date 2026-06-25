@@ -313,8 +313,8 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
         )}
       </Section>
       {lightbox && (
-        <div className="fixed inset-0 z-[100] bg-background/95 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
-          <img src={lightbox.image_url} alt={lightbox.title ?? ""} className="max-h-[90vh] max-w-[90vw] object-contain border border-border" />
+        <div className="fixed inset-0 z-[100] bg-background/95 flex items-center justify-center p-4 lightbox-overlay" onClick={() => setLightbox(null)}>
+          <img src={lightbox.image_url} alt={lightbox.title ?? ""} className="max-h-[90vh] max-w-[90vw] object-contain border border-border lightbox-image" />
         </div>
       )}
     </>
