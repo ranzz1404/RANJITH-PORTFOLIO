@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { LogOut, ArrowLeft, Plus, Trash2, Save, User, FolderKanban, Wrench, Award, Briefcase, Image, Share2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-const ADMIN_EMAIL = "ranjithkumar41690rk@gmail.com";
+
 const sb = supabase as any;
 
 export const Route = createFileRoute("/admin")({
