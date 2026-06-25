@@ -455,7 +455,8 @@ function ContactSection({ profile }: { profile: Profile | null | undefined }) {
 
   return (
     <Section id="contact" label="// 07 — TRANSMIT" title="Contact Me">
-      <div className="grid md:grid-cols-2 gap-12">
+      <Particles count={40} />
+      <div className="relative grid md:grid-cols-2 gap-12" style={{ zIndex: 10 }}>
         <div className="space-y-6">
           <a
             href={`mailto:${profile?.email ?? "ranjithkumar41690rk@gmail.com"}`}
