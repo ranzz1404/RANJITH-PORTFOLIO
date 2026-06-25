@@ -324,16 +324,19 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
 function InternshipsSection({ items }: { items: Internship[] }) {
   return (
     <Section id="internships" label="// 05 — FIELD WORK" title="Internships">
-      <div className="relative space-y-8">
-        <div className="absolute left-4 top-2 bottom-2 w-px bg-border hidden sm:block" />
+      <div className="relative space-y-8" style={{ perspective: 1000 }}>
+        <svg className="absolute left-4 top-0 h-full w-px hidden sm:block overflow-visible" aria-hidden>
+          <line x1="0" y1="0" x2="0" y2="100%" stroke="#FF6A00" strokeWidth="1.5" className="line-draw" />
+        </svg>
         {items.map((it, i) => (
           <motion.div
             key={it.id}
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, z: -50, x: -30 }}
+            whileInView={{ opacity: 1, z: 0, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: i * 0.15 }}
+            transition={{ duration: 0.7, delay: i * 0.2, ease: "easeOut" }}
             className="relative sm:pl-12"
+            style={{ transformStyle: "preserve-3d" }}
           >
             <div className="absolute left-2 top-4 w-4 h-4 border-2 border-accent bg-background hidden sm:block" />
             <div className="border border-border bg-panel p-6">
