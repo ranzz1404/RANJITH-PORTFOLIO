@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Linkedin, Mail, MapPin, Download, ArrowRight, ExternalLink, FileText, Wrench, GraduationCap, Award, Image as ImageIcon, Send } from "lucide-react";
@@ -8,9 +8,6 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/portfolio/Navbar";
 import { Section } from "@/components/portfolio/Section";
-import { GearsBackground } from "@/components/portfolio/GearsBackground";
-import { Particles } from "@/components/portfolio/Particles";
-import { TiltCard } from "@/components/portfolio/TiltCard";
 import type { Profile, Project, Skill, Certificate, Internship, Drawing } from "@/lib/portfolio-types";
 
 export const Route = createFileRoute("/")({
@@ -71,7 +68,6 @@ function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="intro-overlay" aria-hidden />
       <Navbar />
       <Hero profile={p} />
       <About profile={p} />
@@ -91,10 +87,9 @@ function PortfolioPage() {
 function Hero({ profile }: { profile: Profile | null | undefined }) {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      <div className="absolute inset-0 blueprint-grid opacity-60" style={{ zIndex: 0 }} />
-      <GearsBackground />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background pointer-events-none" style={{ zIndex: 1 }} />
-      <svg className="absolute top-20 right-10 w-40 h-40 text-accent/10 hidden md:block" style={{ zIndex: 1 }} viewBox="0 0 100 100" fill="currentColor">
+      <div className="absolute inset-0 blueprint-grid opacity-60" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
+      <svg className="absolute top-20 right-10 w-40 h-40 text-accent/10 hidden md:block" viewBox="0 0 100 100" fill="currentColor">
         <path d="M50 15a35 35 0 100 70 35 35 0 000-70zm0 8l5 8h-10l5-8zm24.7 19.3l-8 5v-10l8 5zM77 50l-8 5v-10l8 5zm-2.3 14.7l-5-8h10l-5 8zM50 77l-5-8h10l-5 8zm-24.7-2.3l8-5v10l-8-5zM23 50l8-5v10l-8-5zm2.3-14.7l5 8h-10l5-8zM50 35a15 15 0 100 30 15 15 0 000-30z" />
       </svg>
       <motion.div
@@ -144,32 +139,6 @@ function Hero({ profile }: { profile: Profile | null | undefined }) {
 }
 
 function About({ profile }: { profile: Profile | null | undefined }) {
-  const leftRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let raf = 0;
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        const el = sectionRef.current;
-        if (!el || !leftRef.current || !rightRef.current) return;
-        const rect = el.getBoundingClientRect();
-        const center = window.innerHeight / 2;
-        const delta = (rect.top + rect.height / 2 - center) / window.innerHeight;
-        const clamped = Math.max(-1, Math.min(1, delta));
-        const off = clamped * 20;
-        leftRef.current.style.transform = `translate3d(0, ${off}px, 0)`;
-        rightRef.current.style.transform = `translate3d(0, ${-off}px, 0)`;
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
     <Section
       id="about"
@@ -180,8 +149,8 @@ function About({ profile }: { profile: Profile | null | undefined }) {
         show: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
       }}
     >
-      <div ref={sectionRef} className="grid md:grid-cols-3 gap-8">
-        <div ref={leftRef} className="md:col-span-2 space-y-6" style={{ willChange: "transform" }}>
+      <div className="grid md:grid-cols-3 gap-8">
+        <div className="md:col-span-2 space-y-6">
           <p className="text-lg leading-relaxed text-muted-foreground">
             {profile?.bio ?? "I am a passionate Mechanical Engineering student with a strong interest in design and manufacturing. I am constantly working to improve my technical skills and gain hands-on experience in the engineering field."}
           </p>
@@ -196,7 +165,7 @@ function About({ profile }: { profile: Profile | null | undefined }) {
             </a>
           )}
         </div>
-        <div ref={rightRef} className="border border-border bg-panel p-6 space-y-4" style={{ willChange: "transform" }}>
+        <div className="border border-border bg-panel p-6 space-y-4">
           <DataRow label="Name" value={profile?.full_name ?? "Ranjith Kumar K"} />
           <DataRow label="Degree" value="B.E. Mechanical Engineering" />
           <DataRow label="Year" value="2nd Year" />
@@ -228,26 +197,16 @@ function SkillsSection({ items }: { items: Skill[] }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="flip-card"
-            style={{ minHeight: 180 }}
+            className="border border-border bg-panel p-5 hover:border-accent transition group"
           >
-            <div className="flip-inner" style={{ minHeight: 180 }}>
-              <div className="flip-face border border-border bg-panel p-5 hover:border-accent transition">
-                <div className="flex items-start justify-between">
-                  <Wrench className="w-5 h-5 text-accent" />
-                  <span className="hud-label">{s.category}</span>
-                </div>
-                <h3 className="mt-4 text-xl font-bold">{s.name}</h3>
-                <p className="mt-2 inline-block text-xs font-mono uppercase tracking-wider border border-accent/40 text-accent px-2 py-1">
-                  {s.level}
-                </p>
-              </div>
-              <div className="flip-face flip-back border border-accent bg-panel p-5 flex flex-col items-center justify-center text-center">
-                <Wrench className="w-12 h-12 text-accent mb-3" />
-                <p className="hud-label">{s.category}</p>
-                <p className="mt-2 text-2xl font-bold text-accent">{s.level}</p>
-              </div>
+            <div className="flex items-start justify-between">
+              <Wrench className="w-5 h-5 text-accent" />
+              <span className="hud-label">{s.category}</span>
             </div>
+            <h3 className="mt-4 text-xl font-bold">{s.name}</h3>
+            <p className="mt-2 inline-block text-xs font-mono uppercase tracking-wider border border-accent/40 text-accent px-2 py-1">
+              {s.level}
+            </p>
           </motion.div>
         ))}
       </div>
@@ -261,45 +220,44 @@ function ProjectsSection({ items }: { items: Project[] }) {
       <div className="grid md:grid-cols-2 gap-6">
         {items.length === 0 && <p className="text-muted-foreground">Projects coming soon.</p>}
         {items.map((p, i) => (
-          <motion.div
+          <motion.article
             key={p.id}
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: i * 0.1 }}
+            className="border border-border bg-panel overflow-hidden hover:border-accent transition group"
           >
-            <TiltCard className="border border-border bg-panel overflow-hidden hover:border-accent transition group h-full">
-              {p.image_url ? (
-                <img src={p.image_url} alt={p.title} className="w-full h-48 object-cover" />
-              ) : (
-                <div className="h-48 blueprint-grid bg-muted flex items-center justify-center">
-                  <FileText className="w-12 h-12 text-accent/30" />
-                </div>
-              )}
-              <div className="p-6">
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {p.project_type && (
-                    <span className="text-[10px] font-mono uppercase tracking-wider border border-accent/40 text-accent px-2 py-1">
-                      {p.project_type}
-                    </span>
-                  )}
-                  {p.category && (
-                    <span className="text-[10px] font-mono uppercase tracking-wider border border-border px-2 py-1">
-                      {p.category}
-                    </span>
-                  )}
-                </div>
-                <h3 className="text-2xl font-bold">{p.title}</h3>
-                <p className="mt-3 text-muted-foreground text-sm leading-relaxed">{p.description}</p>
-                {p.materials && (
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <p className="hud-label">Materials</p>
-                    <p className="mt-1 text-xs text-muted-foreground">{p.materials}</p>
-                  </div>
+            {p.image_url ? (
+              <img src={p.image_url} alt={p.title} className="w-full h-48 object-cover" />
+            ) : (
+              <div className="h-48 blueprint-grid bg-muted flex items-center justify-center">
+                <FileText className="w-12 h-12 text-accent/30" />
+              </div>
+            )}
+            <div className="p-6">
+              <div className="flex flex-wrap gap-2 mb-3">
+                {p.project_type && (
+                  <span className="text-[10px] font-mono uppercase tracking-wider border border-accent/40 text-accent px-2 py-1">
+                    {p.project_type}
+                  </span>
+                )}
+                {p.category && (
+                  <span className="text-[10px] font-mono uppercase tracking-wider border border-border px-2 py-1">
+                    {p.category}
+                  </span>
                 )}
               </div>
-            </TiltCard>
-          </motion.div>
+              <h3 className="text-2xl font-bold">{p.title}</h3>
+              <p className="mt-3 text-muted-foreground text-sm leading-relaxed">{p.description}</p>
+              {p.materials && (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <p className="hud-label">Materials</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{p.materials}</p>
+                </div>
+              )}
+            </div>
+          </motion.article>
         ))}
       </div>
     </Section>
@@ -339,8 +297,8 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
         )}
       </Section>
       {lightbox && (
-        <div className="fixed inset-0 z-[100] bg-background/95 flex items-center justify-center p-4 lightbox-overlay" onClick={() => setLightbox(null)}>
-          <img src={lightbox.image_url} alt={lightbox.title ?? ""} className="max-h-[90vh] max-w-[90vw] object-contain border border-border lightbox-image" />
+        <div className="fixed inset-0 z-[100] bg-background/95 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
+          <img src={lightbox.image_url} alt={lightbox.title ?? ""} className="max-h-[90vh] max-w-[90vw] object-contain border border-border" />
         </div>
       )}
     </>
@@ -350,19 +308,16 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
 function InternshipsSection({ items }: { items: Internship[] }) {
   return (
     <Section id="internships" label="// 05 — FIELD WORK" title="Internships">
-      <div className="relative space-y-8" style={{ perspective: 1000 }}>
-        <svg className="absolute left-4 top-0 h-full w-px hidden sm:block overflow-visible" aria-hidden>
-          <line x1="0" y1="0" x2="0" y2="100%" stroke="#FF6A00" strokeWidth="1.5" className="line-draw" />
-        </svg>
+      <div className="relative space-y-8">
+        <div className="absolute left-4 top-2 bottom-2 w-px bg-border hidden sm:block" />
         {items.map((it, i) => (
           <motion.div
             key={it.id}
-            initial={{ opacity: 0, z: -50, x: -30 }}
-            whileInView={{ opacity: 1, z: 0, x: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: i * 0.2, ease: "easeOut" }}
+            transition={{ duration: 0.6, delay: i * 0.15 }}
             className="relative sm:pl-12"
-            style={{ transformStyle: "preserve-3d" }}
           >
             <div className="absolute left-2 top-4 w-4 h-4 border-2 border-accent bg-background hidden sm:block" />
             <div className="border border-border bg-panel p-6">
@@ -397,15 +352,15 @@ function CertificatesSection({ items }: { items: Certificate[] }) {
           <p className="mt-4 text-muted-foreground">No certificates added yet</p>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ perspective: 1000 }}>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((c, i) => (
             <motion.div
               key={c.id}
-              initial={{ opacity: 0, scale: 0.8, rotateX: 20 }}
-              whileInView={{ opacity: 1, scale: 1, rotateX: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.15, ease: "easeOut" }}
-              className="cert-hover border border-border bg-panel p-5 hover:border-accent flex flex-col"
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+              className="border border-border bg-panel p-5 hover:border-accent transition flex flex-col"
             >
               <div className="flex items-center justify-between">
                 <GraduationCap className="w-5 h-5 text-accent" />
@@ -455,8 +410,7 @@ function ContactSection({ profile }: { profile: Profile | null | undefined }) {
 
   return (
     <Section id="contact" label="// 07 — TRANSMIT" title="Contact Me">
-      <Particles count={40} />
-      <div className="relative grid md:grid-cols-2 gap-12" style={{ zIndex: 10 }}>
+      <div className="grid md:grid-cols-2 gap-12">
         <div className="space-y-6">
           <a
             href={`mailto:${profile?.email ?? "ranjithkumar41690rk@gmail.com"}`}
