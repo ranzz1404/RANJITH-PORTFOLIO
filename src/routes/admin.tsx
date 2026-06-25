@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { LogOut, ArrowLeft, Plus, Trash2, Save, User, FolderKanban, Wrench, Award, Briefcase, Image, Share2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-const ADMIN_EMAIL = "ranjithkumar41690rk@gmail.com";
+
 const sb = supabase as any;
 
 export const Route = createFileRoute("/admin")({
@@ -30,14 +30,21 @@ function AdminPage() {
   const [tab, setTab] = useState<TabKey>("profile");
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user || data.user.email !== ADMIN_EMAIL) {
+    (async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        toast.error("Access restricted");
+        navigate({ to: "/" });
+        return;
+      }
+      const { data: isAdmin, error } = await sb.rpc("is_current_user_admin");
+      if (error || !isAdmin) {
         toast.error("Access restricted");
         navigate({ to: "/" });
         return;
       }
       setAuthChecked(true);
-    });
+    })();
   }, [navigate]);
 
   async function signOut() {
@@ -100,8 +107,11 @@ function AdminPage() {
 function ProfileEditor() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => (await sb.from("profile").select("*").limit(1).maybeSingle()).data,
+    queryKey: ["profile", "admin"],
+    queryFn: async () => {
+      const { data } = await sb.rpc("get_admin_profile");
+      return Array.isArray(data) ? data[0] ?? null : data;
+    },
   });
   const [form, setForm] = useState<any>({});
   useEffect(() => { if (data) setForm(data); }, [data]);
