@@ -30,14 +30,21 @@ function AdminPage() {
   const [tab, setTab] = useState<TabKey>("profile");
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user || data.user.email !== ADMIN_EMAIL) {
+    (async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        toast.error("Access restricted");
+        navigate({ to: "/" });
+        return;
+      }
+      const { data: isAdmin, error } = await sb.rpc("is_current_user_admin");
+      if (error || !isAdmin) {
         toast.error("Access restricted");
         navigate({ to: "/" });
         return;
       }
       setAuthChecked(true);
-    });
+    })();
   }, [navigate]);
 
   async function signOut() {
