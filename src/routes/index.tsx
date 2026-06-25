@@ -371,15 +371,15 @@ function CertificatesSection({ items }: { items: Certificate[] }) {
           <p className="mt-4 text-muted-foreground">No certificates added yet</p>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ perspective: 1000 }}>
           {items.map((c, i) => (
             <motion.div
               key={c.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.8, rotateX: 20 }}
+              whileInView={{ opacity: 1, scale: 1, rotateX: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="border border-border bg-panel p-5 hover:border-accent transition flex flex-col"
+              transition={{ duration: 0.5, delay: i * 0.15, ease: "easeOut" }}
+              className="cert-hover border border-border bg-panel p-5 hover:border-accent flex flex-col"
             >
               <div className="flex items-center justify-between">
                 <GraduationCap className="w-5 h-5 text-accent" />
