@@ -235,44 +235,45 @@ function ProjectsSection({ items }: { items: Project[] }) {
       <div className="grid md:grid-cols-2 gap-6">
         {items.length === 0 && <p className="text-muted-foreground">Projects coming soon.</p>}
         {items.map((p, i) => (
-          <motion.article
+          <motion.div
             key={p.id}
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: i * 0.1 }}
-            className="border border-border bg-panel overflow-hidden hover:border-accent transition group"
           >
-            {p.image_url ? (
-              <img src={p.image_url} alt={p.title} className="w-full h-48 object-cover" />
-            ) : (
-              <div className="h-48 blueprint-grid bg-muted flex items-center justify-center">
-                <FileText className="w-12 h-12 text-accent/30" />
-              </div>
-            )}
-            <div className="p-6">
-              <div className="flex flex-wrap gap-2 mb-3">
-                {p.project_type && (
-                  <span className="text-[10px] font-mono uppercase tracking-wider border border-accent/40 text-accent px-2 py-1">
-                    {p.project_type}
-                  </span>
-                )}
-                {p.category && (
-                  <span className="text-[10px] font-mono uppercase tracking-wider border border-border px-2 py-1">
-                    {p.category}
-                  </span>
-                )}
-              </div>
-              <h3 className="text-2xl font-bold">{p.title}</h3>
-              <p className="mt-3 text-muted-foreground text-sm leading-relaxed">{p.description}</p>
-              {p.materials && (
-                <div className="mt-4 pt-4 border-t border-border">
-                  <p className="hud-label">Materials</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{p.materials}</p>
+            <TiltCard className="border border-border bg-panel overflow-hidden hover:border-accent transition group h-full">
+              {p.image_url ? (
+                <img src={p.image_url} alt={p.title} className="w-full h-48 object-cover" />
+              ) : (
+                <div className="h-48 blueprint-grid bg-muted flex items-center justify-center">
+                  <FileText className="w-12 h-12 text-accent/30" />
                 </div>
               )}
-            </div>
-          </motion.article>
+              <div className="p-6">
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {p.project_type && (
+                    <span className="text-[10px] font-mono uppercase tracking-wider border border-accent/40 text-accent px-2 py-1">
+                      {p.project_type}
+                    </span>
+                  )}
+                  {p.category && (
+                    <span className="text-[10px] font-mono uppercase tracking-wider border border-border px-2 py-1">
+                      {p.category}
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-2xl font-bold">{p.title}</h3>
+                <p className="mt-3 text-muted-foreground text-sm leading-relaxed">{p.description}</p>
+                {p.materials && (
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <p className="hud-label">Materials</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{p.materials}</p>
+                  </div>
+                )}
+              </div>
+            </TiltCard>
+          </motion.div>
         ))}
       </div>
     </Section>
