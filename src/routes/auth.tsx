@@ -25,26 +25,14 @@ function AuthPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (email.trim().toLowerCase() !== ADMIN_EMAIL) {
-      toast.error("Access restricted");
+      toast.error("Access Denied - Unauthorized personnel");
       return;
     }
     setLoading(true);
-    // Try sign in first
-    let { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-    if (error && /invalid|credentials|not found/i.test(error.message)) {
-      // First-time: create account, then sign in
-      const { error: signUpErr } = await supabase.auth.signUp({ email: email.trim(), password });
-      if (signUpErr) {
-        toast.error(signUpErr.message);
-        setLoading(false);
-        return;
-      }
-      const retry = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-      error = retry.error;
-    }
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      toast.error("Invalid credentials");
       return;
     }
     toast.success("Welcome back");
