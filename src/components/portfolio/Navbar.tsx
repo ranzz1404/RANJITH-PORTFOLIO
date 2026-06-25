@@ -32,7 +32,7 @@ export function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <button onClick={() => scrollTo("home")} className="font-display font-bold text-lg tracking-tight">
+        <button onClick={() => scrollTo("home")} className="logo-pulse inline-block font-display font-bold text-lg tracking-tight transition">
           RK<span className="text-accent">.</span>
         </button>
         <nav className="hidden md:flex items-center gap-1">
