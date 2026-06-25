@@ -202,16 +202,26 @@ function SkillsSection({ items }: { items: Skill[] }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="border border-border bg-panel p-5 hover:border-accent transition group"
+            className="flip-card"
+            style={{ minHeight: 180 }}
           >
-            <div className="flex items-start justify-between">
-              <Wrench className="w-5 h-5 text-accent" />
-              <span className="hud-label">{s.category}</span>
+            <div className="flip-inner" style={{ minHeight: 180 }}>
+              <div className="flip-face border border-border bg-panel p-5 hover:border-accent transition">
+                <div className="flex items-start justify-between">
+                  <Wrench className="w-5 h-5 text-accent" />
+                  <span className="hud-label">{s.category}</span>
+                </div>
+                <h3 className="mt-4 text-xl font-bold">{s.name}</h3>
+                <p className="mt-2 inline-block text-xs font-mono uppercase tracking-wider border border-accent/40 text-accent px-2 py-1">
+                  {s.level}
+                </p>
+              </div>
+              <div className="flip-face flip-back border border-accent bg-panel p-5 flex flex-col items-center justify-center text-center">
+                <Wrench className="w-12 h-12 text-accent mb-3" />
+                <p className="hud-label">{s.category}</p>
+                <p className="mt-2 text-2xl font-bold text-accent">{s.level}</p>
+              </div>
             </div>
-            <h3 className="mt-4 text-xl font-bold">{s.name}</h3>
-            <p className="mt-2 inline-block text-xs font-mono uppercase tracking-wider border border-accent/40 text-accent px-2 py-1">
-              {s.level}
-            </p>
           </motion.div>
         ))}
       </div>
