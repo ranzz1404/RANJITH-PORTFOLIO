@@ -107,8 +107,11 @@ function AdminPage() {
 function ProfileEditor() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => (await sb.from("profile").select("*").limit(1).maybeSingle()).data,
+    queryKey: ["profile", "admin"],
+    queryFn: async () => {
+      const { data } = await sb.rpc("get_admin_profile");
+      return Array.isArray(data) ? data[0] ?? null : data;
+    },
   });
   const [form, setForm] = useState<any>({});
   useEffect(() => { if (data) setForm(data); }, [data]);
