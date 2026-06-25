@@ -144,6 +144,32 @@ function Hero({ profile }: { profile: Profile | null | undefined }) {
 }
 
 function About({ profile }: { profile: Profile | null | undefined }) {
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const el = sectionRef.current;
+        if (!el || !leftRef.current || !rightRef.current) return;
+        const rect = el.getBoundingClientRect();
+        const center = window.innerHeight / 2;
+        const delta = (rect.top + rect.height / 2 - center) / window.innerHeight;
+        const clamped = Math.max(-1, Math.min(1, delta));
+        const off = clamped * 20;
+        leftRef.current.style.transform = `translate3d(0, ${off}px, 0)`;
+        rightRef.current.style.transform = `translate3d(0, ${-off}px, 0)`;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <Section
       id="about"
@@ -154,8 +180,8 @@ function About({ profile }: { profile: Profile | null | undefined }) {
         show: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
       }}
     >
-      <div className="grid md:grid-cols-3 gap-8">
-        <div className="md:col-span-2 space-y-6">
+      <div ref={sectionRef} className="grid md:grid-cols-3 gap-8">
+        <div ref={leftRef} className="md:col-span-2 space-y-6" style={{ willChange: "transform" }}>
           <p className="text-lg leading-relaxed text-muted-foreground">
             {profile?.bio ?? "I am a passionate Mechanical Engineering student with a strong interest in design and manufacturing. I am constantly working to improve my technical skills and gain hands-on experience in the engineering field."}
           </p>
@@ -170,7 +196,7 @@ function About({ profile }: { profile: Profile | null | undefined }) {
             </a>
           )}
         </div>
-        <div className="border border-border bg-panel p-6 space-y-4">
+        <div ref={rightRef} className="border border-border bg-panel p-6 space-y-4" style={{ willChange: "transform" }}>
           <DataRow label="Name" value={profile?.full_name ?? "Ranjith Kumar K"} />
           <DataRow label="Degree" value="B.E. Mechanical Engineering" />
           <DataRow label="Year" value="2nd Year" />
