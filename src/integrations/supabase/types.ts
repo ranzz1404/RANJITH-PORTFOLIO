@@ -327,6 +327,31 @@ export type Database = {
       }
     }
     Functions: {
+      get_admin_profile: {
+        Args: never
+        Returns: {
+          avatar_url: string | null
+          bio: string | null
+          career_goal: string | null
+          email: string | null
+          full_name: string | null
+          github_url: string | null
+          headline: string | null
+          id: string
+          linkedin_url: string | null
+          location: string | null
+          phone: string | null
+          resume_url: string | null
+          tagline: string | null
+          updated_at: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "profile"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       is_current_user_admin: { Args: never; Returns: boolean }
     }
     Enums: {
