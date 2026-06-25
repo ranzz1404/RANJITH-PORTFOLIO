@@ -71,6 +71,7 @@ function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <div className="intro-overlay" aria-hidden />
       <Navbar />
       <Hero profile={p} />
       <About profile={p} />
