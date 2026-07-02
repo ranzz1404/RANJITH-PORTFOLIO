@@ -85,6 +85,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
+      <BlueprintCarBackground />
       <Outlet />
       <Toaster theme="dark" position="top-right" />
     </QueryClientProvider>
