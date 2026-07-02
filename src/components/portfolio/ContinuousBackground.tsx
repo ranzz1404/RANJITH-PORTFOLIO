@@ -211,10 +211,9 @@ export function ContinuousBackground() {
       style={{
         position: "fixed",
         inset: 0,
-        zIndex: -1,
+        zIndex: 0,
         pointerEvents: "none",
         opacity: 0.6,
-        background: "#0A0A0A",
       }}
     >
       <Canvas

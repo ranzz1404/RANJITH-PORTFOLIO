@@ -44,7 +44,7 @@
 
 @layer base {
   * { border-color: var(--border); }
-  html { scroll-behavior: smooth; background-color: transparent; }
+  html { scroll-behavior: smooth; background-color: #0A0A0A; }
   body {
     background-color: transparent;
     color: var(--foreground);

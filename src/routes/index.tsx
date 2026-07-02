@@ -73,7 +73,7 @@ function PortfolioPage() {
   }, []);
 
   return (
-    <div className="min-h-screen text-foreground">
+    <div className="min-h-screen text-foreground relative z-10">
       {!introDone && <div className="intro-overlay" />}
       <Navbar />
       <Hero profile={p} />
