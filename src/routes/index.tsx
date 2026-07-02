@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/portfolio/Navbar";
 import { Section } from "@/components/portfolio/Section";
-import { HeroScene } from "@/components/portfolio/HeroScene";
 import type { Profile, Project, Skill, Certificate, Internship, Drawing } from "@/lib/portfolio-types";
 
 export const Route = createFileRoute("/")({
@@ -74,7 +73,7 @@ function PortfolioPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       {!introDone && <div className="intro-overlay" />}
       <Navbar />
       <Hero profile={p} />
@@ -96,7 +95,6 @@ function Hero({ profile }: { profile: Profile | null | undefined }) {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       <div className="absolute inset-0 blueprint-grid opacity-60" />
-      <HeroScene />
       <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background pointer-events-none" />
       <svg className="absolute top-20 right-10 w-40 h-40 text-accent/10 hidden md:block z-[1]" viewBox="0 0 100 100" fill="currentColor">
         <path d="M50 15a35 35 0 100 70 35 35 0 000-70zm0 8l5 8h-10l5-8zm24.7 19.3l-8 5v-10l8 5zM77 50l-8 5v-10l8 5zm-2.3 14.7l-5-8h10l-5 8zM50 77l-5-8h10l-5 8zm-24.7-2.3l8-5v10l-8-5zM23 50l8-5v10l-8-5zm2.3-14.7l5 8h-10l5-8zM50 35a15 15 0 100 30 15 15 0 000-30z" />

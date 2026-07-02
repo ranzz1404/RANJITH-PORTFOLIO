@@ -1,5 +1,5 @@
 import { Suspense, useMemo, useRef, useEffect, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 function Gear({
@@ -123,10 +123,72 @@ function Scene() {
   );
 }
 
-export function HeroScene() {
+// Scroll-driven camera: moves smoothly with scroll progress + subtle parallax.
+// Reading scroll via a ref avoids re-rendering React on every scroll event.
+function ScrollCamera() {
+  const { camera } = useThree();
+  const scrollRef = useRef(0);
+  const targetRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      scrollRef.current = window.scrollY / max;
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    update();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  // Optional subtle pointer parallax (cheap, listener only updates refs).
+  useEffect(() => {
+    let raf = 0;
+    const onMove = (e: PointerEvent) => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        targetRef.current.x = (e.clientX / window.innerWidth - 0.5) * 0.6;
+        targetRef.current.y = (e.clientY / window.innerHeight - 0.5) * 0.4;
+      });
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  useFrame((_, delta) => {
+    const s = scrollRef.current;
+    // Camera drifts along a gentle arc as the user scrolls down.
+    const targetY = s * 1.8;
+    const targetZ = 7 - s * 1.4;
+    const px = targetRef.current.x;
+    const py = targetRef.current.y;
+    camera.position.x += (px - camera.position.x) * Math.min(1, delta * 2);
+    camera.position.y += (targetY + py - camera.position.y) * Math.min(1, delta * 2);
+    camera.position.z += (targetZ - camera.position.z) * Math.min(1, delta * 2);
+    camera.lookAt(0, s * 1.0, 0);
+  });
+
+  return null;
+}
+
+export function ContinuousBackground() {
   const [enabled, setEnabled] = useState(true);
-  const [visible, setVisible] = useState(true);
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (typeof navigator !== "undefined" && (navigator.hardwareConcurrency ?? 8) < 4) {
@@ -134,35 +196,40 @@ export function HeroScene() {
     }
   }, []);
 
+  // Pause rendering when the tab is hidden (and resume on return).
   useEffect(() => {
-    if (!wrapRef.current) return;
-    const obs = new IntersectionObserver(
-      ([e]) => setVisible(e.isIntersecting),
-      { threshold: 0.01 }
-    );
-    obs.observe(wrapRef.current);
-    return () => obs.disconnect();
+    const onVisibility = () => setActive(!document.hidden);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
 
-  if (!enabled) return null;
+  if (!enabled || !mounted) return null;
 
   return (
     <div
-      ref={wrapRef}
-      className="absolute inset-0 z-0 pointer-events-none"
-      style={{ opacity: 0.6 }}
       aria-hidden
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: -1,
+        pointerEvents: "none",
+        opacity: 0.6,
+        background: "#0A0A0A",
+      }}
     >
       <Canvas
         dpr={[1, 1.5]}
         camera={{ position: [0, 0, 7], fov: 50 }}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-        frameloop={visible ? "always" : "demand"}
+        frameloop={active ? "always" : "demand"}
       >
         <Suspense fallback={null}>
           <Scene />
+          <ScrollCamera />
         </Suspense>
       </Canvas>
     </div>
   );
 }
+
+export default ContinuousBackground;
