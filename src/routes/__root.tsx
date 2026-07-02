@@ -10,6 +10,7 @@ import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
+import { BlueprintCarBackground } from "@/components/portfolio/BlueprintCarBackground";
 
 function NotFoundComponent() {
   return (
