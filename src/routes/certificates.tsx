@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Upload, Trash2, Download, FileText, Loader as Loader2 } from "lucide-react";
+import { ArrowLeft, Upload, Trash2, Download, FileText, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/portfolio/Navbar";
 
@@ -103,7 +103,7 @@ function CertificatesPage() {
   const [dragOver, setDragOver] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative z-10">
+    <div className="min-h-screen bg-background text-foreground">
       <Navbar />
       <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-24">
         <Link to="/" className="hud-label text-accent inline-flex items-center gap-2 mb-6">

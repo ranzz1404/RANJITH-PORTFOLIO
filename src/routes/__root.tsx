@@ -10,7 +10,7 @@ import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
-import { ContinuousBackground } from "@/components/portfolio/ContinuousBackground";
+import { BlueprintCarBackground } from "@/components/portfolio/BlueprintCarBackground";
 
 function NotFoundComponent() {
   return (
@@ -86,7 +86,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <ContinuousBackground />
+      <BlueprintCarBackground />
       <Outlet />
       <Toaster theme="dark" position="top-right" />
     </QueryClientProvider>

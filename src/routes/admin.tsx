@@ -4,7 +4,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { LogOut, ArrowLeft, Plus, Trash2, Save, User, FolderKanban, Wrench, Award, Briefcase, Image, Share2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { FileUploadManager } from "@/components/portfolio/FileUploadManager";
 
 
 const sb = supabase as any;
@@ -58,7 +57,7 @@ function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative z-10">
+    <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border sticky top-0 z-40 bg-background/95 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -95,9 +94,9 @@ function AdminPage() {
           {tab === "profile" && <ProfileEditor />}
           {tab === "projects" && <CrudTable table="projects" fields={projectFields} title="Projects" />}
           {tab === "skills" && <CrudTable table="skills" fields={skillFields} title="Skills" />}
-          {tab === "certificates" && <CrudTable table="certificates" fields={certFields} title="Certificates" bucket="certificates" />}
+          {tab === "certificates" && <CrudTable table="certificates" fields={certFields} title="Certificates" />}
           {tab === "internships" && <CrudTable table="internships" fields={internshipFields} title="Internships" />}
-          {tab === "drawings" && <CrudTable table="drawings" fields={drawingFields} title="Drawings" bucket="drawings" />}
+          {tab === "drawings" && <CrudTable table="drawings" fields={drawingFields} title="Drawings" />}
           {tab === "social_links" && <CrudTable table="social_links" fields={socialFields} title="Social Links" />}
         </main>
       </div>
@@ -233,7 +232,7 @@ const socialFields: FieldDef[] = [
   { key: "sort_order", label: "Sort Order", type: "number" },
 ];
 
-function CrudTable({ table, fields, title, bucket }: { table: string; fields: FieldDef[]; title: string; bucket?: string }) {
+function CrudTable({ table, fields, title }: { table: string; fields: FieldDef[]; title: string }) {
   const qc = useQueryClient();
   const { data = [], isLoading } = useQuery({
     queryKey: [table, "admin"],
@@ -310,11 +309,6 @@ function CrudTable({ table, fields, title, bucket }: { table: string; fields: Fi
         <div className="mb-6 border border-accent bg-panel p-5">
           <p className="hud-label text-accent mb-4">// NEW ENTRY</p>
           <RowForm fields={fields} value={adding} onChange={setAdding} />
-          {bucket && (
-            <div className="mt-4">
-              <FileUploadManager bucket={bucket} onUseUrl={(url) => setAdding({ ...adding, image_url: url })} />
-            </div>
-          )}
           <div className="mt-4 flex gap-2">
             <button onClick={addRow} className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 text-xs font-mono uppercase tracking-wider"><Save className="w-3 h-3" /> Save</button>
             <button onClick={() => setAdding(null)} className="border border-border px-4 py-2 text-xs font-mono uppercase tracking-wider">Cancel</button>
@@ -332,14 +326,6 @@ function CrudTable({ table, fields, title, bucket }: { table: string; fields: Fi
               {editing ? (
                 <>
                   <RowForm fields={fields} value={editing} onChange={(v) => setDrafts({ ...drafts, [row.id]: v })} />
-                  {bucket && (
-                    <div className="mt-4">
-                      <FileUploadManager
-                        bucket={bucket}
-                        onUseUrl={(url) => setDrafts({ ...drafts, [row.id]: { ...drafts[row.id], image_url: url } })}
-                      />
-                    </div>
-                  )}
                   <div className="mt-4 flex gap-2">
                     <button onClick={() => saveRow(row.id)} className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 text-xs font-mono uppercase tracking-wider"><Save className="w-3 h-3" /> Save</button>
                     <button onClick={() => cancelEdit(row.id)} className="border border-border px-4 py-2 text-xs font-mono uppercase tracking-wider">Cancel</button>
