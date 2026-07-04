@@ -4,6 +4,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { LogOut, ArrowLeft, Plus, Trash2, Save, User, FolderKanban, Wrench, Award, Briefcase, Image, Share2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { FileUploadField } from "@/components/portfolio/FileUploadField";
+
+const BUCKET_FOR_TABLE: Record<string, string> = {
+  certificates: "certificates",
+  drawings: "drawings",
+};
 
 
 const sb = supabase as any;
