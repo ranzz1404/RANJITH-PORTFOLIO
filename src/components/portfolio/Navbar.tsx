@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
+
 import { Lock, Menu, X } from "lucide-react";
 
 const SECTIONS = ["home", "about", "skills", "projects", "drawings", "internships", "certificates", "contact"];
