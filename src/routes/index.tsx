@@ -354,23 +354,36 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {items.map((d, i) => (
-              <motion.button
-                key={d.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                onClick={() => setLightbox(d)}
-                className="group relative overflow-hidden border border-border aspect-square"
-              >
-                <img src={d.image_url} alt={d.title ?? "Drawing"} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
-                <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 flex flex-col justify-end p-4 transition">
-                  <p className="hud-label text-accent">{d.category}</p>
-                  <p className="text-sm font-bold">{d.title}</p>
-                </div>
-              </motion.button>
-            ))}
+            {items.map((d, i) => {
+              const isPdf = !!d.image_url && /\.pdf(\?|$)/i.test(d.image_url);
+              return (
+                <motion.button
+                  key={d.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  onClick={() => {
+                    if (isPdf) window.open(d.image_url, "_blank", "noopener,noreferrer");
+                    else setLightbox(d);
+                  }}
+                  className="group relative overflow-hidden border border-border aspect-square"
+                >
+                  {isPdf ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-panel gap-2">
+                      <FileText className="w-10 h-10 text-accent" />
+                      <span className="hud-label text-accent">PDF</span>
+                    </div>
+                  ) : (
+                    <img src={d.image_url} alt={d.title ?? "Drawing"} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                  )}
+                  <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 flex flex-col justify-end p-4 transition">
+                    <p className="hud-label text-accent">{d.category}</p>
+                    <p className="text-sm font-bold">{d.title}</p>
+                  </div>
+                </motion.button>
+              );
+            })}
           </div>
         )}
       </Section>
@@ -379,6 +392,7 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
           <img src={lightbox.image_url} alt={lightbox.title ?? ""} className="lightbox-img max-h-[90vh] max-w-[90vw] object-contain border border-border" />
         </div>
       )}
+
     </>
   );
 }
