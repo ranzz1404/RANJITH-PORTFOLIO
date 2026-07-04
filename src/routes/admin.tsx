@@ -358,11 +358,12 @@ function CrudTable({ table, fields, title }: { table: string; fields: FieldDef[]
   );
 }
 
-function RowForm({ fields, value, onChange }: { fields: FieldDef[]; value: any; onChange: (v: any) => void }) {
+function RowForm({ fields, value, onChange, table }: { fields: FieldDef[]; value: any; onChange: (v: any) => void; table?: string }) {
+  const bucket = table ? BUCKET_FOR_TABLE[table] : undefined;
   return (
     <div className="grid sm:grid-cols-2 gap-4">
       {fields.map((f) => (
-        <div key={f.key} className={f.type === "textarea" || f.type === "list" ? "sm:col-span-2" : ""}>
+        <div key={f.key} className={f.type === "textarea" || f.type === "list" || f.key === "image_url" ? "sm:col-span-2" : ""}>
           <label className="hud-label block mb-2">{f.label}</label>
           {f.type === "textarea" || f.type === "list" ? (
             <textarea
@@ -377,6 +378,13 @@ function RowForm({ fields, value, onChange }: { fields: FieldDef[]; value: any; 
               value={value[f.key] ?? ""}
               onChange={(e) => onChange({ ...value, [f.key]: e.target.value })}
               className="w-full bg-background border border-border focus:border-accent outline-none px-3 py-2 text-sm transition"
+            />
+          )}
+          {f.key === "image_url" && bucket && (
+            <FileUploadField
+              bucket={bucket}
+              currentUrl={value[f.key] ?? ""}
+              onUploaded={(url) => onChange({ ...value, [f.key]: url })}
             />
           )}
         </div>
