@@ -4,6 +4,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { LogOut, ArrowLeft, Plus, Trash2, Save, User, FolderKanban, Wrench, Award, Briefcase, Image, Share2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { FileUploadField } from "@/components/portfolio/FileUploadField";
+
+const BUCKET_FOR_TABLE: Record<string, string> = {
+  certificates: "certificates",
+  drawings: "drawings",
+};
 
 
 const sb = supabase as any;
@@ -308,7 +314,7 @@ function CrudTable({ table, fields, title }: { table: string; fields: FieldDef[]
       {adding && (
         <div className="mb-6 border border-accent bg-panel p-5">
           <p className="hud-label text-accent mb-4">// NEW ENTRY</p>
-          <RowForm fields={fields} value={adding} onChange={setAdding} />
+          <RowForm fields={fields} value={adding} onChange={setAdding} table={table} />
           <div className="mt-4 flex gap-2">
             <button onClick={addRow} className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 text-xs font-mono uppercase tracking-wider"><Save className="w-3 h-3" /> Save</button>
             <button onClick={() => setAdding(null)} className="border border-border px-4 py-2 text-xs font-mono uppercase tracking-wider">Cancel</button>
@@ -325,7 +331,7 @@ function CrudTable({ table, fields, title }: { table: string; fields: FieldDef[]
             <div key={row.id} className="border border-border bg-panel p-5">
               {editing ? (
                 <>
-                  <RowForm fields={fields} value={editing} onChange={(v) => setDrafts({ ...drafts, [row.id]: v })} />
+                  <RowForm fields={fields} value={editing} onChange={(v) => setDrafts({ ...drafts, [row.id]: v })} table={table} />
                   <div className="mt-4 flex gap-2">
                     <button onClick={() => saveRow(row.id)} className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 text-xs font-mono uppercase tracking-wider"><Save className="w-3 h-3" /> Save</button>
                     <button onClick={() => cancelEdit(row.id)} className="border border-border px-4 py-2 text-xs font-mono uppercase tracking-wider">Cancel</button>
@@ -352,11 +358,12 @@ function CrudTable({ table, fields, title }: { table: string; fields: FieldDef[]
   );
 }
 
-function RowForm({ fields, value, onChange }: { fields: FieldDef[]; value: any; onChange: (v: any) => void }) {
+function RowForm({ fields, value, onChange, table }: { fields: FieldDef[]; value: any; onChange: (v: any) => void; table?: string }) {
+  const bucket = table ? BUCKET_FOR_TABLE[table] : undefined;
   return (
     <div className="grid sm:grid-cols-2 gap-4">
       {fields.map((f) => (
-        <div key={f.key} className={f.type === "textarea" || f.type === "list" ? "sm:col-span-2" : ""}>
+        <div key={f.key} className={f.type === "textarea" || f.type === "list" || f.key === "image_url" ? "sm:col-span-2" : ""}>
           <label className="hud-label block mb-2">{f.label}</label>
           {f.type === "textarea" || f.type === "list" ? (
             <textarea
@@ -371,6 +378,13 @@ function RowForm({ fields, value, onChange }: { fields: FieldDef[]; value: any; 
               value={value[f.key] ?? ""}
               onChange={(e) => onChange({ ...value, [f.key]: e.target.value })}
               className="w-full bg-background border border-border focus:border-accent outline-none px-3 py-2 text-sm transition"
+            />
+          )}
+          {f.key === "image_url" && bucket && (
+            <FileUploadField
+              bucket={bucket}
+              currentUrl={value[f.key] ?? ""}
+              onUploaded={(url) => onChange({ ...value, [f.key]: url })}
             />
           )}
         </div>
