@@ -314,7 +314,7 @@ function CrudTable({ table, fields, title }: { table: string; fields: FieldDef[]
       {adding && (
         <div className="mb-6 border border-accent bg-panel p-5">
           <p className="hud-label text-accent mb-4">// NEW ENTRY</p>
-          <RowForm fields={fields} value={adding} onChange={setAdding} />
+          <RowForm fields={fields} value={adding} onChange={setAdding} table={table} />
           <div className="mt-4 flex gap-2">
             <button onClick={addRow} className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 text-xs font-mono uppercase tracking-wider"><Save className="w-3 h-3" /> Save</button>
             <button onClick={() => setAdding(null)} className="border border-border px-4 py-2 text-xs font-mono uppercase tracking-wider">Cancel</button>
