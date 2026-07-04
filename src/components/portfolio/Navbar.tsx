@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
+
 import { Lock, Menu, X } from "lucide-react";
 
 const SECTIONS = ["home", "about", "skills", "projects", "drawings", "internships", "certificates", "contact"];
@@ -49,12 +50,7 @@ export function Navbar() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Link to="/certificates" className="hidden md:inline-block px-3 py-2 text-xs font-mono uppercase tracking-wider text-muted-foreground hover:text-accent transition">
-            vault
-          </Link>
-          <Link to="/drawings" className="hidden md:inline-block px-3 py-2 text-xs font-mono uppercase tracking-wider text-muted-foreground hover:text-accent transition">
-            gallery
-          </Link>
+
           <Link to="/auth" aria-label="Admin login" className="p-2 border border-border hover:border-accent hover:text-accent transition">
             <Lock className="w-4 h-4" />
           </Link>
