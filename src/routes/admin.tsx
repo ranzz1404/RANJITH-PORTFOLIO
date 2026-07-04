@@ -331,7 +331,7 @@ function CrudTable({ table, fields, title }: { table: string; fields: FieldDef[]
             <div key={row.id} className="border border-border bg-panel p-5">
               {editing ? (
                 <>
-                  <RowForm fields={fields} value={editing} onChange={(v) => setDrafts({ ...drafts, [row.id]: v })} />
+                  <RowForm fields={fields} value={editing} onChange={(v) => setDrafts({ ...drafts, [row.id]: v })} table={table} />
                   <div className="mt-4 flex gap-2">
                     <button onClick={() => saveRow(row.id)} className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 text-xs font-mono uppercase tracking-wider"><Save className="w-3 h-3" /> Save</button>
                     <button onClick={() => cancelEdit(row.id)} className="border border-border px-4 py-2 text-xs font-mono uppercase tracking-wider">Cancel</button>
