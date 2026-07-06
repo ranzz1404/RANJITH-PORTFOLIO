@@ -414,7 +414,7 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
                     <div className="w-full h-full flex flex-col items-center justify-center bg-panel gap-2">
                       <FileText className="w-10 h-10 text-accent" />
                       <span className="hud-label text-accent">PDF</span>
-                      <span className="text-[10px] text-muted-foreground px-2 truncate max-w-full">{filename}</span>
+                      <span className="text-[10px] text-foreground px-2 truncate max-w-full">{filename}</span>
                     </div>
                   ) : (
                     <img src={d.image_url} alt={d.title ?? "Drawing"} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
