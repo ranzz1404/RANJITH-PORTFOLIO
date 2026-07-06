@@ -342,6 +342,36 @@ function ProjectsSection({ items }: { items: Project[] }) {
   );
 }
 
+type MediaType = "image" | "pdf" | "unknown";
+
+function getMediaType(url: string | null | undefined, mimeType?: string | null): MediaType {
+  if (!url) return "unknown";
+  if (mimeType) {
+    const lower = mimeType.toLowerCase();
+    if (lower === "application/pdf") return "pdf";
+    if (lower.startsWith("image/")) return "image";
+  }
+  try {
+    const pathname = new URL(url).pathname;
+    const ext = pathname.split(".").pop()?.toLowerCase() ?? "";
+    if (ext === "pdf") return "pdf";
+    if (["jpg", "jpeg", "png", "webp", "svg", "svg+xml"].includes(ext)) return "image";
+    return "unknown";
+  } catch {
+    return "unknown";
+  }
+}
+
+function getFileName(url: string | null | undefined): string {
+  if (!url) return "file";
+  try {
+    const pathname = new URL(url).pathname;
+    return pathname.split("/").pop() || "file";
+  } catch {
+    return "file";
+  }
+}
+
 function DrawingsSection({ items }: { items: Drawing[] }) {
   const [lightbox, setLightbox] = useState<Drawing | null>(null);
   return (
@@ -355,33 +385,66 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {items.map((d, i) => {
-              const isPdf = !!d.image_url && /\.pdf(\?|$)/i.test(d.image_url);
+              const type = getMediaType(d.image_url);
+              const isPdf = type === "pdf";
+              const filename = getFileName(d.image_url);
+              const handleOpen = () => {
+                if (isPdf) window.open(d.image_url, "_blank", "noopener,noreferrer");
+                else setLightbox(d);
+              };
               return (
-                <motion.button
+                <motion.div
                   key={d.id}
+                  role="button"
+                  tabIndex={0}
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.08 }}
-                  onClick={() => {
-                    if (isPdf) window.open(d.image_url, "_blank", "noopener,noreferrer");
-                    else setLightbox(d);
+                  onClick={handleOpen}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleOpen();
+                    }
                   }}
-                  className="group relative overflow-hidden border border-border aspect-square"
+                  className="group relative overflow-hidden border border-border aspect-square cursor-pointer"
                 >
                   {isPdf ? (
                     <div className="w-full h-full flex flex-col items-center justify-center bg-panel gap-2">
                       <FileText className="w-10 h-10 text-accent" />
                       <span className="hud-label text-accent">PDF</span>
+                      <span className="text-[10px] text-muted-foreground px-2 truncate max-w-full">{filename}</span>
                     </div>
                   ) : (
                     <img src={d.image_url} alt={d.title ?? "Drawing"} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                   )}
-                  <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 flex flex-col justify-end p-4 transition">
+                  <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 flex flex-col justify-end p-4 transition pointer-events-none group-hover:pointer-events-auto">
                     <p className="hud-label text-accent">{d.category}</p>
                     <p className="text-sm font-bold">{d.title}</p>
+                    {isPdf && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <a
+                          href={d.image_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1 border border-accent text-accent px-2 py-1 text-[10px] font-mono uppercase hover:bg-accent hover:text-accent-foreground transition"
+                        >
+                          <ExternalLink className="w-3 h-3" /> View
+                        </a>
+                        <a
+                          href={d.image_url}
+                          download={filename}
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1 border border-accent text-accent px-2 py-1 text-[10px] font-mono uppercase hover:bg-accent hover:text-accent-foreground transition"
+                        >
+                          <Download className="w-3 h-3" /> Download
+                        </a>
+                      </div>
+                    )}
                   </div>
-                </motion.button>
+                </motion.div>
               );
             })}
           </div>
@@ -389,10 +452,34 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
       </Section>
       {lightbox && (
         <div className="lightbox-overlay fixed inset-0 z-[100] bg-background/95 flex items-center justify-center p-4" style={{ perspective: 1200 }} onClick={() => setLightbox(null)}>
-          <img src={lightbox.image_url} alt={lightbox.title ?? ""} className="lightbox-img max-h-[90vh] max-w-[90vw] object-contain border border-border" />
+          {getMediaType(lightbox.image_url) === "pdf" ? (
+            <div className="flex flex-col items-center gap-4 text-center max-w-md" onClick={(e) => e.stopPropagation()}>
+              <FileText className="w-16 h-16 text-accent" />
+              <p className="hud-label text-accent">PDF</p>
+              <p className="text-sm text-muted-foreground break-all px-4">{getFileName(lightbox.image_url)}</p>
+              <div className="flex flex-wrap gap-2 justify-center">
+                <a
+                  href={lightbox.image_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 border border-accent text-accent px-4 py-2 text-xs font-mono uppercase hover:bg-accent hover:text-accent-foreground transition"
+                >
+                  <ExternalLink className="w-4 h-4" /> View PDF
+                </a>
+                <a
+                  href={lightbox.image_url}
+                  download={getFileName(lightbox.image_url)}
+                  className="inline-flex items-center gap-2 border border-accent text-accent px-4 py-2 text-xs font-mono uppercase hover:bg-accent hover:text-accent-foreground transition"
+                >
+                  <Download className="w-4 h-4" /> Download
+                </a>
+              </div>
+            </div>
+          ) : (
+            <img src={lightbox.image_url} alt={lightbox.title ?? ""} className="lightbox-img max-h-[90vh] max-w-[90vw] object-contain border border-border" />
+          )}
         </div>
       )}
-
     </>
   );
 }
