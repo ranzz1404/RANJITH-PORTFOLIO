@@ -389,8 +389,10 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
               const isPdf = type === "pdf";
               const filename = getFileName(d.image_url);
               const handleOpen = () => {
-                if (isPdf) window.open(d.image_url, "_blank", "noopener,noreferrer");
-                else setLightbox(d);
+                if (isPdf) {
+                  const w = window.open(d.image_url, "_blank", "noopener,noreferrer");
+                  if (!w) window.location.href = d.image_url;
+                } else setLightbox(d);
               };
               return (
                 <motion.div
