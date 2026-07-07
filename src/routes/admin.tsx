@@ -115,8 +115,8 @@ function ProfileEditor() {
   const { data, isLoading } = useQuery({
     queryKey: ["profile", "admin"],
     queryFn: async () => {
-      const { data } = await sb.rpc("get_admin_profile");
-      return Array.isArray(data) ? data[0] ?? null : data;
+      const { data } = await sb.from("profile").select("*").limit(1).maybeSingle();
+      return data ?? null;
     },
   });
   const [form, setForm] = useState<any>({});
