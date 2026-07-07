@@ -438,6 +438,8 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
                         <a
                           href={d.image_url}
                           download={filename}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                           className="inline-flex items-center gap-1 border border-accent text-accent px-2 py-1 text-[10px] font-mono uppercase hover:bg-accent hover:text-accent-foreground transition"
                         >
