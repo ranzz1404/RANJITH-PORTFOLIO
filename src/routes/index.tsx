@@ -389,8 +389,10 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
               const isPdf = type === "pdf";
               const filename = getFileName(d.image_url);
               const handleOpen = () => {
-                if (isPdf) window.open(d.image_url, "_blank", "noopener,noreferrer");
-                else setLightbox(d);
+                if (isPdf) {
+                  const w = window.open(d.image_url, "_blank", "noopener,noreferrer");
+                  if (!w) window.location.href = d.image_url;
+                } else setLightbox(d);
               };
               return (
                 <motion.div
@@ -436,6 +438,8 @@ function DrawingsSection({ items }: { items: Drawing[] }) {
                         <a
                           href={d.image_url}
                           download={filename}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                           className="inline-flex items-center gap-1 border border-accent text-accent px-2 py-1 text-[10px] font-mono uppercase hover:bg-accent hover:text-accent-foreground transition"
                         >
